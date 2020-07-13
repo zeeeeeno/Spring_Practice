@@ -12,7 +12,10 @@ public class MainController {
 
     @GetMapping("/")
     public String index() {
-        log.info("index()");
-        return "index";
+
+        log.info("img_test()");
+        return "img_test";
+//        log.info("index()");
+//        return "index";
     }
 }
