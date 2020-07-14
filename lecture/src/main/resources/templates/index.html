@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html" xmlns:p="" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Main Page</title>
+</head>
+<body>
+    <h1> Main Page </h1>
+    <form th:action="@{/doRequestPythonRest}"/>
+        <input type="submit" value="파이썬에 데이터 요청하기"/>
+
+    <!--
+    P = Paragraph, 단락
+    Model에 있는 servTime을 식별함 >> Server Time: ${servTime}으로 실제 값을 뽑아온다.
+    -->
+    <p th:text="${servTime}"> Server Time: ${servTime} </p>
+
+</body>
+</html>
