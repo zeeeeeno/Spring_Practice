@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8" http-equiv="Content-Type" content="text/html">
+    <title>Title</title>
+</head>
+<script type="text/javascript"
+        src="http://code.jquery.com/jquery-2.1.4.min.js">
+</script>
+<script>
+        $(document).ready(function() {
+            <!-- id 값을 찾고 싶을 때 #을 붙여야 함 -->
+            var formObj = $("#itemMania");
+
+            console.log(formObj);
+
+            $("#btnModify").on("click", function() {
+                var boardNo = $("#id");
+                <!-- 숫자로 변경 -->
+                var idNoVal = boardNo.val();
+
+                self.location = "getModify?id="+idNoVal;
+            });
+
+            $("#btnRemove").on("click", function() {
+                formObj.attr("action", "remove");
+                formObj.submit();
+            });
+
+            $("#btnList").on("click", function() {
+                self.location = "itemlist";
+            });
+        });
+
+
+</script>
+<body>
+<h2>Read</h2>
+
+<!--object는 사용하는 엔티티 -->
+<form id="itemMania" th:object="${itemMania}" method="POST">
+    <!--엔티티 정보-->
+    <input type="hidden" name="id" th:field="*{id}"/>
+    <table>
+        <tr>
+            <td>Id</td>
+            <td>
+                <input type="text" name="id" th:field="*{id}" readonly="readonly">
+            </td>
+            <td>PW</td>
+            <td>
+                <input type="text" name="pw" th:field="*{pw}" readonly="readonly">
+            </td>
+            <td>Nickname</td>
+            <td>
+                <input type="text" name="nickname" th:field="*{nickname}" readonly="readonly">
+            </td>
+            <td>item</td>
+            <td>
+                <input type="text" name="item" th:field="*{item}" readonly="readonly">
+            </td>
+            <td>Price</td>
+            <td>
+                <input type="text" name="price" th:field="*{price}" readonly="readonly">
+            </td>
+
+        </tr>
+    </table>
+</form>
+
+<div>
+    <button type="submit" id="btnModify">Modify</button>
+    <button type="submit" id="btnRemove">Remove</button>
+    <button type="submit" id="btnList">List</button>
+</div>
+</body>
+</html>
