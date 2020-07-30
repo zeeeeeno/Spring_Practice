@@ -19,15 +19,15 @@ public class ItemManiaController {
     private ItemManiaService service;
 
     @GetMapping("/getItemRegister")
-    public String getRegister(GameMania gameMania, Model model) throws Exception {
-        log.info("getRegister()");
+    public String getItemRegister(GameMania gameMania, Model model) throws Exception {
+        log.info("getItemRegister()");
 
-        return "gameMania/register";
+        return "gameMania/itemRegister";
     }
 
     @PostMapping("/postItemRegister")
-    public String postRegister(GameMania gameMania, Model model) throws Exception {
-        log.info("postRegister()");
+    public String postItemRegister(GameMania gameMania, Model model) throws Exception {
+        log.info("postItemRegister()");
 
         service.register(gameMania);
 

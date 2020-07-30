@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>game mania register</title>
+</head>
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.4.min.js">
+</script>
+
+<script>
+    $(document).ready(function() {
+        var formObj = $("#game");
+
+        $("#btnRegister").on("click", function() {
+            formObj.attr("action", "postItemRegister");
+            formObj.attr("method", "post");
+            formObj.submit();
+        });
+
+        $("#btnList").on("click", function() {
+            self.location = "itemList";
+        });
+    });
+</script>
+<body>
+
+<h2>Item Register Page</h2>
+    <form id="game" action="gameMania/success.html"
+          th:action="@{getItemRegister}"
+          th:object="${game}" method="post">
+        <table>
+            <tr>
+                <td>ID</td>
+                <td><input type="text" name="id" th:field="*{id}"/></td>
+                <td><font color="red">
+                    <span th:if="${#fields.hasErrors('id')}"
+                          th:errors="*{id}">
+                        id Error Message
+                    </span>
+                </font></td>
+            </tr>
+            <tr>
+                <td>pw</td>
+                <td><input type="text" name="pw" th:field="*{pw}"/></td>
+                <td><font color="red">
+                        <span th:if="${#fields.hasErrors('pw')}"
+                              th:errors="*{pw}">
+                            pw Error Message
+                        </span>
+                </font></td>
+            </tr>
+            <tr>
+                <td>nickname</td>
+                <td><input type="text" name="nickname" th:field="*{nickname}"/></td>
+                <td><font color="red">
+                        <span th:if="${#fields.hasErrors('nickname')}"
+                              th:errors="*{nickname}">
+                            nickname Error Message
+                        </span>
+                </font></td>
+            </tr>
+            <tr>
+                <td>nickname</td>
+                <td><input type="text" name="item" th:field="*{item}"/></td>
+                <td><font color="red">
+                        <span th:if="${#fields.hasErrors('item')}"
+                              th:errors="*{item}">
+                            nickname Error Message
+                        </span>
+                </font></td>
+            </tr>
+            <tr>
+                <td>nickname</td>
+                <td><input type="text" name="price" th:field="*{price}"/></td>
+                <td><font color="red">
+                        <span th:if="${#fields.hasErrors('price')}"
+                              th:errors="*{price}">
+                            nickname Error Message
+                        </span>
+                </font></td>
+            </tr>
+        </table>
+    </form>
+
+    <div>
+        <button type="submit" id="btnRegister">Register</button>
+        <button type="submit" id="btnList">List</button>
+    </div>
+</body>
+</html>
