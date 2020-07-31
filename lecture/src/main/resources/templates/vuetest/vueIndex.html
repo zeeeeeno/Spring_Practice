@@ -32,7 +32,7 @@
     HP: <input v-model="characterHp"><br>
     ATK: <input v-model="characterAtk"><br>
     DEF: <input v-model="characterDef"><br>
-    소지금: <input v-model="characterMoney"><br><br><br>
+    소지금: <input v-model="characterMoney"><br>
 
     <button v-on:click="show=!show">Change</button>
     <transition>
@@ -59,13 +59,62 @@
     <p>ATK: {{ characterAtk }}</p>
     <p>DEF: {{ characterDef }}</p>
     <p>소지금: {{ characterMoney }}</p>
+    <p>장비: {{ characterEquipment }}</p>
+    <label>
+        <input type="checkbox" v-model="myEquip" v-on:click="test()">My Equipment!
+    </label>
+    <table border="1">
+        <tr v-if="myEquip">
+            <!-- 선택 했을 때 보여지게 -->
+            <tr v-if="myEquip">
+                <th width="20" align="center">NO</th>
+                <th width="120" align="center">NAME</th>
+                <th width="320" align="center">Damage</th>
+                <th width="320" align="center">Defendency</th>
+            </tr>
+            <tr v-if="myEquip" v-for="(list, idx) in characterEquipment" v-bind:key="list.equipName">
+                <th width="20" align="center">{{ idx+1 }}</th>
+                <th width="80" align="center">{{ list.itemName }}</th>
+                <th width="320" align="center">{{ list.damage }}</th>
+                <th width="320" align="center">{{ list.defense }}</th>
+            </tr>
+        </tr>
+    </table>
 
-
+    <label>
+        <input type="checkbox" v-model="equipView" v-on:click="shuffleEquipLost()">Equip List!
+    </label>
+    <button v-on:click="calcSet()"> Set </button>
+    <table border="1">
+        <!-- 선택 했을 때 보여지게 -->
+        <tr v-if="equipView">
+            <th width="20" align="center">NO</th>
+            <th width="120" align="center">NAME</th>
+            <th width="120" align="center">Damage</th>
+            <th width="320" align="center">Defendency</th>
+            <th width="40" align="center">Set</th>
+        </tr>
+        <!-- v-for 사용 시, key가 반드시 있어야 함 -->
+        <tr v-if="equipView" v-for="(list, idx) in equipment" v-bind:key="list.equipName">
+            <th width="20" align="center">{{ idx+1 }}</th>
+            <th width="80" align="center">{{ list.equipName }}</th>
+            <th width="80" align="center">{{ list.damage }}</th>
+            <th width="320" align="center">{{ list.defense }}</th>
+            <th width="40" align="center">
+                <label>
+                    <input type="checkbox" v-model="equipListValue" v-bind:value="idx">
+                </label>
+            </th>
+    </table><br>
+    <br><br><br><br><br>
+    <p> {{ equipListValue }} </p>
+    <br><br><br><br><br>
     <!--    이름 <input v-model="monsterName">-->
     <!-- Vue는 객체의 변화를 감지하면 HTML을 다시 렌더링한다. -->
     <button v-on:click="addMonster">Add Monster</button>
     <button v-on:click="addManyMonster">Add Many Monster</button>
     <button v-on:click="ThorHammer">Thor's Hammer</button>
+
     <ul>
         <li v-for="(item, index) in monster" v-bind:key="item.id" v-if="item.hp">
             ID: {{ item.id }} NAME: {{ item.monsterName }} HP: {{ item.hp }} Status:{{ item.status }}
@@ -74,15 +123,7 @@
             <!--            <button v-on:click="doRemove(index)"> Delete Monster</button>-->
             <button v-on:click="doAttack(index)"> Attack </button>
             <button v-on:click="omnislash(index)"> Omnislash </button>
-        </li>
-        <br>
-        <!--         몬스터의 hp가 0임을 확인하면 경험치 산정을 수행하도록 한다.-->
-        <!--        <li v-for="(item, index) in monBook" v-bind:key="item.monsterName">-->
-        <!--           {{ item.monsterName }} HP:{{ item.hp }} EXP:{{ item.exp }}-->
-        <!--            <span v-if="item.hp <= 0">-->
-        <!--                    <button v-on:click="doRemove(index)">Delete Monster</button>-->
-        <!--            </span>-->
-        <!--        </li>-->
+        </li><br>
     </ul>
     <br>
     <button v-on:click="getRandom()">Generate Random</button>
@@ -227,9 +268,22 @@ var app = new Vue({
             { itemName: 'HP Potion IV', price: 6000, effect: { desc: "hp recover", amount: 500 } },
             { itemName: 'HP Potion V', price: 4200, effect: { desc: "hp recover", amount: 600 } },
             { itemName: 'Sword', price: 10000, effect: { desc: "weapon", amount: 1000 } },
-            { itemName: 'Iron Sword', price: 20000, effect: { desc: "weapon", amount: 1500 } }
+            { itemName: 'Pitching', price: 20000, effect: { desc: "weapon", amount: 1500 } },
+            { itemName: 'Gloves', price: 20000, effect: { desc: "weapon", amount: 1500 } },
+            { itemName: 'Rainboots', price: 20000, effect: { desc: "weapon", amount: 1500 } },
+            { itemName: 'Cloak', price: 20000, effect: { desc: "weapon", amount: 1500 } },
+            { itemName: 'Armor', price: 20000, effect: { desc: "weapon", amount: 1500 } }
+        ],
+        equipment: [
+            { equipName: 'Pitching', damage: 0, defense: 20 },
+            { equipName: 'Gloves', damage: 10, defense: 10 },
+            { equipName: 'Rainboots', damage: 0, defense: 10 },
+            { equipName: 'Cloak', damage: 0, defense: 15 },
+            { equipName: 'Armor', damage: 0, defense: 30 }
         ],
         shopList: [],
+        characterEquipment: [],
+        equipmentList: [],
         monsterName: 'Chimera',
         characterName: '',
         characterLv: 1,
@@ -249,8 +303,11 @@ var app = new Vue({
         optValue: '',
         optArrValue: [],
         shopView: false,
+        equipView: false,
+        myEquip: false,
         myInven: false,
-        shopListValue: []
+        shopListValue: [],
+        equipListValue: []
     },
     methods: {
         handleClick: function(event) {
@@ -324,6 +381,43 @@ var app = new Vue({
         },
         test: function() {
            alert('check')
+        },
+        shuffleEquipLost: function() {
+            if(!this.equipView) {
+                this.equipListValue = []
+            }
+        },
+        calcSet: function() {
+            var allPass = true
+            top:
+            for(var j = 0; j < this.equipListValue.length; j++) {
+                if(this.characterEquipment.length == 0 ){
+                    alert(this.characterEquipment.length)
+                    this.characterEquipment.push({
+                        equipName: this.equipment[equipListValue[j]].equipName,
+                        damage: this.equipment[equipListValue[j]].damage,
+                        defense: this.equipment[equipListValue[j]].defense
+                    })
+                    this.characterAtk = parseInt(this.characterAtk+this.equipmentList[j].damage)
+                    this.characterDef = parseInt(this.characterDef+this.equipmentList[j].defense)
+                } else {
+                    for(var i=0; i<this.characterEquipment.length; i++) {
+                        if (this.equipmentList[equipListValue[j]] == this.characterEquipment[i]) {
+                            allPass = false
+                            alert("이미 존재하는 장비입니다.")
+                            break top
+                        } else {
+                            this.characterEquipment.push({
+                                equipName: this.equipment[equipListValue[j]].equipName,
+                                damage: this.equipment[equipListValue[j]].damage,
+                                defense: this.equipment[equipListValue[j]].defense
+                            })
+                            this.characterAtk = parseInt(this.characterAtk+this.equipmentList[j].damage)
+                            this.characterDef = parseInt(this.characterDef+this.equipmentList[j].defense)
+                        }
+                    }
+                }
+            }
         },
         shuffleShopList: function() {
             if(!this.shopView) {

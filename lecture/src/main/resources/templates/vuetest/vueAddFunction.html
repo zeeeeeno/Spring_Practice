@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml"
+      xmlns:border="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue Add Function</title>
+</head>
+<body>
+<h1>Add Function Game</h1>
+<div id="app">
+    <table border="1">
+        <tr>
+            <tr>
+                <td width="120" align="center">캐릭터명</td>
+                <td width="60" align="center">
+                    <p>
+                        <input placeholder="캐릭터명을 입력하세요." v-model="characterName"><br>
+                    </p>
+                </td>
+                <td width="120" align="center">경험치</td>
+                <td width="60" align="center"><p>{{ curExp }}/{{ needExp}}</p></td>
+            </tr>
+        </tr>
+        <tr>
+            <td width="120" align="center">상태</td>
+            <td width="60" align="center" colspan="3">
+                <p>
+                    <input placeholder="상태를 입력하세요." v-model="characterStatus"><br>
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td width="120" align="center">레벨</td>
+            <td width="60" align="center" colspan="3"><p>{{ characterLv }}</p></td>
+        </tr>
+        <tr>
+            <td width="120" align="center">HP</td>
+            <td width="60" align="center" colspan="3"><p>{{ characterHp }}</p></td>
+        </tr>
+        <tr>
+            <td width="120" align="center">ATK</td>
+            <td width="60" align="center" colspan="3"><p>{{ characterAtk }}</p></td>
+        </tr>
+        <tr>
+            <td width="120" align="center">DEF</td>
+            <td width="60" align="center" colspan="3"><p>{{ characterDef }}</p></td>
+        </tr>
+        <tr>
+            <td width="120" align="center">Money</td>
+            <td width="60" align="center" colspan="3"><p>{{ money }}</p></td>
+        </tr>
+    </table>
+
+    <h2>Equipment</h2>
+    <table border="1">
+        <tr v-if="Equipment" v-for="(list, index) in helmetEquipment" v-bind:key="list.itemName"></tr>
+            <th align="center" width="200">Helmet</th>
+            <td align="center"> {{ helmetEquipment }} </td>
+        <tr>
+            <th align="center" width="40">Armour</th>
+        </tr>
+        <tr>
+            <th align="center" width="40">Gloves</th>
+        </tr>
+        <tr>
+            <th align="center" width="40">Shoes</th>
+        </tr>
+    </table><br>
+
+    <h2>Monster Section</h2>
+    <button v-on:click="addMonster">Add Monster</button>
+    <button v-on:click="addManyMonster">Add Many Monster</button>
+    <button v-on:click="ThorHammer">Thor's Hammer</button><br><br>
+    <div style="overflow:scroll; width:800px; height:400px; border:2px solid black;">
+        <ul>
+            <li v-for="(item, index) in monster" v-bind:key="item.id" v-if="item.hp">
+                ID:{{ item.id }} {{ item.monsterName }} HP:{{ item.hp }} Status:{{ item.status }}
+                <span v-if="item.hp > 300">Strong</span>
+                <span v-if="item.hp < 50">Morbidity</span>
+                <button v-on:click="doAttack(index)">Attack</button>
+                <button v-on:click="omnislash(index)">Omnislash</button>
+            </li>
+        </ul>
+    </div>
+</button>
+
+<h2>상점</h2>
+<p>helmetEquipment >> {{ helmetEquipment }}</p>
+<p>armourEquipment >> {{ armourEquipment }}</p>
+<p>glovesEquipment >> {{ glovesEquipment }}</p>
+<p>shoesEquipment >> {{ shoesEquipment }}</p>
+<label>
+    <input type="checkbox" v-model="myInven" v-on:click="test()">My Inventory
+</label>
+<table border="1">
+    <tr v-if="myInven">
+        <th align="center" width="20">No</th>
+        <th align="center" width="80">Name</th>
+        <th align="center" width="320">Effect</th>
+        <th align="center" width="80">Select</th>
+    </tr>
+    <tr v-if="myInven" v-for="(list, idx) in myInventory" v-bind:key="list.itemName">
+        <th align="center" width="20">{{ idx + 1 }}</th>
+        <th align="center" width="80">{{ list.itemName }}</th>
+        <th align="center" width="320">{{ list.effect.desc }}</th>
+        <th align="center" width="40">
+            <label>
+                <button v-if="list.effect.atk" v-on:click="upload(idx)">장착</button>
+                <button v-if="list.effect.def" v-on:click="upload(idx)">장착</button>
+            </label>
+        </th>
+    </tr>
+</table>
+<label>
+    <input type="checkbox" v-model="shopView" v-on:click="shuffleShopList()">Shop List
+</label>
+<button v-on:click="calcBuy()">Buy!</button>
+<table border="1">
+    <tr v-if="shopView">
+        <th align="center" width="20">No</th>
+        <th align="center" width="80">Name</th>
+        <th align="center" width="80">Price</th>
+        <th align="center" width="320">Effect</th>
+        <th align="center" width="40">Buy</th>
+    </tr>
+    <tr v-if="shopView" v-for="(list, idx) in shopList"
+        v-bind:key="list.itemName">
+        <th align="center" width="20">{{ idx + 1 }}</th>
+        <th align="center" width="80">{{ list.itemName }}</th>
+        <th align="center" width="80">{{ list.price }}</th>
+        <th align="center" width="320">{{ list.effect.desc }}</th>
+        <th align="center" width="40">
+            <label>
+                <input type="checkbox" v-model="shopListValue" v-bind:value="idx">
+            </label>
+        </th>
+    </tr>
+</table>
+</div>
+<script src="https://unpkg.com/vuex@2.0.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.10">
+</script>
+<script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                monster: [
+                    { id: 1, monsterName: 'Slime', hp: 10, status: 'Default' },
+                    { id: 2, monsterName: 'Goblin', hp: 20, status: 'Default' },
+                    { id: 3, monsterName: 'Dragon', hp: 5000, status: 'Default' }
+                ],
+                monBook: [
+                    { monsterName: 'Slime', exp: 1, hp: 10, sprMoney: 10 },
+                    { monsterName: 'Goblin', exp: 2, hp: 20, sprMoney: 20 },
+                    { monsterName: 'Red Slime', exp: 5, hp: 10, sprMoney: 40 },
+                    { monsterName: 'Chimera', exp: 20, hp: 100, sprMoney: 200 },
+                    { monsterName: 'King Bee', exp: 300, hp: 1200, sprMoney: 2400 },
+                    { monsterName: 'Ghost', exp: 500, hp: 1500, sprMoney: 3000 },
+                    { monsterName: 'Lich', exp: 1000, hp: 2000, sprMoney: 4000 },
+                    { monsterName: 'Behemoth', exp: 2000, hp: 10000, sprMoney: 20000 },
+                    { monsterName: 'Dragon', exp: 100000, hp: 100000, sprMoney: 200000 },
+                    { monsterName: 'King Behemoth', exp: 200000, hp: 200000, sprMoney: 500000 }
+                ],
+                itemBook: [
+                    { itemName: 'HP Potion I', price: 1, effect: { desc: "hp recover", amount: 200 } },
+                    { itemName: 'HP Potion II', price: 1, effect: { desc: "hp recover", amount: 500 } },
+                    { itemName: 'HP Potion III', price: 1, effect: { desc: "hp recover", amount: 2000 } },
+                    { itemName: 'HP Potion IV', price: 1, effect: { desc: "hp recover", amount: 6000 } },
+                    { itemName: 'HP Potion V', price: 1, effect: { desc: "hp recover", amount: 15000 } },
+                    { itemName: 'Sword', price: 1, effect: { desc: "weapon", atk: 100 } },
+                    { itemName: 'Iron Sword', price: 1, effect: { desc: "weapon", atk: 200 } },
+                    { itemName: 'head', price: 1, effect: { desc: "Helmet", atk: 0, def: 100 } },
+                    { itemName: 'body', price: 1, effect: { desc: "Armour", atk: 0, def: 200 } },
+                    { itemName: 'hands', price: 1, effect: { desc: "Gloves", atk: 0, def: 50 } },
+                    { itemName: 'bottom', price: 1, effect: { desc: "Shoes", atk: 0, def: 50 } }
+                ],
+                shopList: [],
+                monsterName: 'Chimera',
+                characterName: '',
+                characterLv: 1,
+                characterStatus: '',
+                characterHp: 100,
+                characterAtk: 10,
+                characterDef: 1,
+                onlyCalcDef: 0,
+                curExp: 0,
+                needExp: 10,
+                randomTest: 0,
+                boolTest: true,
+                money: 500,
+                shopView: false,
+                myInven: false,
+                shopListValue: [],
+                myInventory: [],
+                Equip: false,
+                Equipment: [],
+                helmetEquipment: [],
+                armourEquipment: [],
+                glovesEquipment: [],
+                shoesEquipment: [],
+                shoesEquipment: []
+            },
+            methods: {
+                upload: function(idx) {
+                    alert("upload")
+                    if(this.myInventory[idx].itemName == 'head') {
+                        if(this.helmetEquipment.length == 0) {
+                            this.helmetEquipment.push({
+                                itemName: this.myInventory[idx].itemName,
+                                afk: this.myInventory[idx].atk,
+                                def: this.myInventory[idx].def
+                            })
+                        } else {
+                            for(var i = 0; i < this.helmetEquipment.length; i++) {
+                                if(this.myInventory[idx].itemName == this.helmetEquipment[i].itemName) {
+                                    break
+                                } else {
+                                    this.helmetEquipment.push({
+                                        itemName: this.myInventory[idx].itemName,
+                                        afk: this.myInventory[idx].atk,
+                                        def: this.myInventory[idx].def
+                                    })
+                                }
+                            }
+                        }
+
+                    } else if(this.myInventory[idx].itemName == 'body') {
+                        if(this.armourEquipment.length == 0) {
+                            this.armourEquipment.push({
+                                itemName: this.myInventory[idx].itemName,
+                                afk: this.myInventory[idx].effect.atk,
+                                def: this.myInventory[idx].effect.def
+                            })
+                        } else {
+                            for(var i = 0; i < this.armourEquipment.length; i++) {
+                                if(this.myInventory[idx].itemName == this.armourEquipment[i].itemName) {
+                                    break
+                                } else {
+                                    this.armourEquipment.push({
+                                        itemName: this.myInventory[idx].itemName,
+                                        afk: this.myInventory[idx].atk,
+                                        def: this.myInventory[idx].def
+                                    })
+                                }
+                            }
+                        }
+                    } else if(this.myInventory[idx].itemName == 'hands') {
+                        if(this.glovesEquipment.length == 0) {
+                            this.glovesEquipment.push({
+                                itemName: this.myInventory[idx].itemName,
+                                afk: this.myInventory[idx].atk,
+                                def: this.myInventory[idx].def
+                            })
+                        } else {
+                            for(var i = 0; i < this.glovesEquipment.length; i++) {
+                                if(this.myInventory[idx].itemName == this.glovesEquipment[i].itemName) {
+                                    break
+                                } else {
+                                    this.glovesEquipment.push({
+                                        itemName: this.myInventory[idx].itemName,
+                                        afk: this.myInventory[idx].atk,
+                                        def: this.myInventory[idx].def
+                                    })
+                                }
+                            }
+                        }
+                    } else if(this.myInventory[idx].itemName == 'bottom'){
+                        if(this.shoesEquipment.length == 0) {
+                            this.shoesEquipment.push({
+                                itemName: this.myInventory[idx].itemName,
+                                afk: this.myInventory[idx].atk,
+                                def: this.myInventory[idx].def
+                            })
+                        } else {
+                            for(var i = 0; i < this.shoesEquipment.length; i++) {
+                                if(this.myInventory[idx].itemName == this.shoesEquipment[i].itemName) {
+                                    break
+                                } else {
+                                    this.shoesEquipment.push({
+                                        itemName: this.myInventory[idx].itemName,
+                                        afk: this.myInventory[idx].atk,
+                                        def: this.myInventory[idx].def
+                                    })
+                                }
+                            }
+                        }
+                    }
+                },
+                handleClick: function(event) {
+                    alert(event.target)
+                },
+                increment: function() {
+                    this.count += 1
+                },
+                addMonster: function() {
+                    var max = this.monster.reduce(function(a, b) {
+                        return a > b.id ? a : b.id
+                    }, 0)
+                    var lenMax = this.monBook.length
+                    var idx = Math.floor(Math.random() * lenMax)
+                    this.monster.push({
+                        id: max + 1,
+                        monsterName: this.monBook[idx].monsterName,
+                        hp: this.monBook[idx].hp,
+                        status: 'Default'
+                    })
+                },
+                addManyMonster: function() {
+                    for(var i = 0; i < 100; i ++) {
+                        var max = this.monster.reduce(function(a, b) {
+                            return a > b.id ? a : b.id
+                        }, 0)
+                        var lenMax = this.monBook.length
+                        var idx = Math.floor(Math.random() * lenMax)
+                        this.monster.push({
+                            id: max + 1,
+                            monsterName: this.monBook[idx].monsterName,
+                            hp: this.monBook[idx].hp,
+                            status: 'Default'
+                        })
+                    }
+                },
+                doRemove: function(index) {
+                    this.monster.splice(index, 1)
+                },
+                doAttack: function(index) {
+                    this.monster[index].hp -= this.characterAtk
+                },
+                ThorHammer: function() {
+                    var i
+                    for(i = 0; i < this.monster.length; i++) {
+                        this.monster[i].hp = parseInt(this.monster[i].hp - this.characterAtk * 1.5)
+                        if(this.monster[i].hp > 0) {
+                            this.monster[i].status = 'Stun'
+                        }
+                    }
+                },
+                omnislash: function(index) {
+                    // alert('겁나 아픈거')
+                    this.monster[index].hp = parseInt(this.monster[index].hp - this.characterAtk * 20)
+                },
+                test: function() {
+                    //alert('check')
+                },
+                shuffleShopList: function() {
+                    // !는 not 연산이므로 어떤 결과든 부정함
+                    if(!this.shopView) {
+                        this.shopListValue = []
+                    }
+
+                    // 상점에 새로운 아이템을 갱신하도록 만드는 위치
+                    for(var i = 0; i < 10; i++) {
+                        var randIdx = Math.floor(Math.random() * this.itemBook.length)
+                        this.shopList[i] = this.itemBook[randIdx]
+                    }
+                },
+                calcBuy: function() {
+                    var tmpSum = 0
+                    for(var i = 0; i < this.shopListValue.length; i++) {
+                        console.log(this.shopListValue[i])
+                        // 가장 내부의 for Loop은 상점에 있는 물건의 개수
+                        for(var j = 0; j < this.shopList.length; j++) {
+                            console.log('inner loop')
+                            if(this.shopListValue[i] == j) {
+                                console.log('match!')
+                                tmpSum += this.shopList[j].price
+                                break
+                            }
+                        }
+                    }
+                    // 돈 계산하는 위치
+                    if(this.money - tmpSum >= 0) {
+                        this.money -= tmpSum
+                      for(var i =0; i< this.shopListValue.length; i++) {
+                      this.myInventory.push({
+                        itemName: this.shopList[this.shopListValue[i]].itemName,
+                        atk: this.shopList[this.shopListValue[i]].effect.atk,
+                        def: this.shopList[this.shopListValue[i]].effect.def,
+                        effect:this.shopList[this.shopListValue[i]].effect
+                      })
+                  }
+                    } else {
+                        alert('돈읎다')
+                    }
+                }
+            },
+            beforeCreate: function () {
+                // alert('Before Create: ' + this.monster)
+            },
+            created: function () {
+                // alert('Created: ' + this.monster)
+            },
+            beforeMount: function () {
+                // alert('Before Mount: ' + this.monster)
+            },
+            mounted: function () {
+                // alert('Mounted: ' + this.monster)
+            },
+            beforeUpdate: function () {
+                var i
+                for(i = 0; i < this.monster.length; i++) {
+                    if(this.monster[i].hp <= 0) {
+                        for(var j = 0; j < this.monBook.length; j++) {
+                            if(this.monster[i].monsterName
+                              == this.monBook[j].monsterName) {
+                                this.curExp += this.monBook[j].exp
+                                var tmp = this.monBook[j].sprMoney
+                                this.money += parseInt(tmp + Math.random() * (tmp / 2))
+                            }
+                        }
+                        this.monster.splice(i, 1)
+                    }
+                }
+
+                var criteria = this.curExp
+                for(; this.curExp >= this.needExp; ) {
+                    this.curExp = parseInt(this.curExp - this.needExp)
+                    this.characterLv += 1
+                    this.characterHp += 10
+                    this.characterAtk += 2
+                    this.onlyCalcDef += 0.4
+                    this.characterDef = Math.floor(this.onlyCalcDef)
+                    if(this.characterLv < 10) {
+                        this.needExp = parseInt(this.needExp * 1.1)
+                    } else if(this.characterLv < 20) {
+                        this.needExp = parseInt(this.needExp * 1.2)
+                    } else if(this.characterLv < 30) {
+                        this.needExp = parseInt(this.needExp * 1.3)
+                    } else if(this.characterLv < 40) {
+                        this.needExp = parseInt(this.needExp * 1.4)
+                    } else if(this.characterLv < 50) {
+                        this.needExp = parseInt(this.needExp * 1.5)
+                    } else if(this.characterLv < 90) {
+                        this.needExp = parseInt(this.needExp * 1.7)
+                    } else if(this.characterLv < 100) {
+                        this.needExp = parseInt(this.needExp * 2)
+                    }
+                }
+            },
+            updated: function () {
+                // alert('Updated: ' + this.monster)
+            },
+            beforeDestroy: function () {
+                // alert('Before Destroy: ' + this.monster)
+            },
+            destroyed: function () {
+                // alert('Destroyed: ' + this.monster)
+            }
+        })
+    </script>
+</body>
+</html>

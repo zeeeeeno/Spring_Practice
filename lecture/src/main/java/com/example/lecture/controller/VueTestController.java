@@ -10,4 +10,9 @@ public class VueTestController {
     public String vueIndex() {
         return "vuetest/vueIndex";
     }
+
+    @GetMapping("/vueAddFunction")
+    public String vueAddFunction() {
+        return "vuetest/vueAddFunction";
+    }
 }
