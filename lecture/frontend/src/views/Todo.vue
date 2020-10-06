@@ -18,6 +18,7 @@ import TodoList from '../components/TodoList.vue'
 import TodoFooter from '../components/TodoFooter.vue'
 import TodoFilter from '../components/TodoFilter.vue'
 import { mapActions } from 'vuex'
+
 export default {
   name: 'Todo',
   components: {

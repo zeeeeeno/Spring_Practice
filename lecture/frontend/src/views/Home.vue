@@ -1,30 +1,56 @@
 <template>
   <div class="home">
     <!-- img alt="Vue logo" src="../assets/logo.png" -->
-    <div id="header">
+    <div id="header" v-if="isAuthorized">
+      <button id="login" @click="onClickLogout">Logout</button>
+      <router-link :to="{ name: 'Home' }" class="nav-link" active-class="active">
+        Home
+      </router-link>
       <router-link :to="{name: 'About'}" class="nav-link" active-class="active">
-        About Us<br>
-      </router-link><br>
+        About Us<br><br>
+      </router-link>
       <router-link :to="{name: 'Test'}" class="nav-link" active-class="active">
-        Test Us<br>
-      </router-link><br>
-      <router-link :to="{name: 'Home'}" class="nav-link" active-class="active">
-        Home<br>
-      </router-link><br>
-      <router-link :to="{name: 'Login'}" class="nav-link" active-class="active">
-        Login<br>
-      </router-link><br>
-      <router-link :to="{name: 'SignUp'}" class="nav-link" active-class="active">
-        SignUp<br><br>
+        Test<br><br>
       </router-link>
       <router-link :to="{name: 'Todo'}" class="nav-link" active-class="active">
-        Todo
+        Todo<br><br>
       </router-link>
+      <router-link :to="{name: 'Concave'}" class="nav-link" active-class="active">
+        Concave<br><br>
+      </router-link>
+      <router-link :to="{name: 'BoardListPage'}" class="nav-link" active-class="active">
+        Board<br><br>
+      </router-link>
+      <router-link :to="{name: 'VuetifyBoardListPage'}" class="nav-link" active-class="active">
+        VuetifyBoardListPage<br><br>
+      </router-link>
+      <router-link :to="{name: 'VuetifyBoard'}" class="nav-link" active-class="active">
+        VuetifyBoard<br><br>
+      </router-link>
+      <router-link :to="{name: 'CrawlCategory'}" class="nav-link" active-class="active">
+        CrawlCategory<br><br>
+      </router-link>
+      <h2>This is a Home Pages</h2>
+      <div id="app">
+        {{ message }}<br>
+      </div>
+      <div>
+        <br><span>{{ myinfo.auth }}계정, 접속을 환영합니다.</span>
+      </div>
     </div>
-
-    <h2>This is a Home Pages</h2>
-    <div id="app">
-      {{ message }}<br>
+    <div id="header" v-else>
+      <button id="login" @click="$router.push('LoginPage')">
+        Login
+      </button>
+      <button id="login" @click="$router.push('AdminSetupPage')">
+        Register Admin
+      </button>
+      <router-link :to="{ name: 'Home' }" class="nav-link" active-class="active">
+        Home
+      </router-link>
+      <router-link :to="{ name: 'About' }" class="nav-link" active-class="active">
+        About Us
+      </router-link>
     </div>
   </div>
 </template>
@@ -33,11 +59,13 @@
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
 /* eslint-disable no-unused-vars */
-// import store from '../store'
+import store from '../store'
 import Vue from 'vue'
-import cookies from 'vue-cookies'
+// import cookies from 'vue-cookies'
 
-Vue.use(cookies)
+import { mapState, mapGetters, mapActions } from 'vuex'
+
+// Vue.use(cookies)
 
 export default {
   name: 'Home',
@@ -46,29 +74,48 @@ export default {
       message: 'Vue test Message'
     }
   },
+  methods: {
+    onClickLogout () {
+      this.logout()
+      alert('Success Logout')
+      this.$router.push({ name: 'Home' })
+    },
+    ...mapActions(['logout'])
+  },
+  computed: {
+    ...mapState(['myinfo']),
+    ...mapGetters(['isAuthorized'])
+  },
   components: {
   }
 }
 </script>
 
 <style scoped>
-  div {
-    border: 2px solid #ccc;
-  }
+div {
+  border: 2px solid #ccc;
+}
 
-  header {
-    padding: 15px;
-    margin-bottom: 15px;
-    margin: 5px 5px;
-  }
+#header {
+  padding: 15px;
+  margin-bottom: 15px;
+  margin: 5px 5px;
+}
 
-  img {
-    width: auto;
-    height: auto;
-    max-width: 1000px;
-    max-height: 350px;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-  }
+img {
+  width: auto;
+  height: auto;
+  max-width: 1000px;
+  max-height: 350px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#login {
+  background-color: #77aadd;
+  color: #ffffff;
+  font-weight: bold;
+  float: right;
+}
 </style>
